@@ -7,6 +7,8 @@ from types import SimpleNamespace
 from typing import List
 import pandas as pd
 
+# os.add_dll_directory("D:/Bandit/experiment/query-bandit/ffmpeg-7.1.1-full_build-shared/bin")
+
 import torch
 from tqdm import tqdm
 
@@ -748,6 +750,10 @@ def inference_byoq(
 
 
 if __name__ == "__main__":
+    # import torch
+    # print(torch.cuda.is_available())
     import fire
-
     fire.Fire()
+    # os.environ['CONFIG_ROOT'] = "D:/Bandit/experiment/query-bandit/config"
+    # inference_byoq(ckpt_path="vdbgp-pre-aug-bal.ckpt", input_path="001039.mp3", query_path="clean-electric-guitar_116bpm_B_major.wav",
+    #                output_path="separated_instrument/result.wav", config_path="expt/bandit-everything-test.yml", batch_size=8, use_cuda=True)

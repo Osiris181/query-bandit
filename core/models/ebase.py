@@ -276,13 +276,22 @@ class EndToEndLightningSystem(pl.LightningModule):
         )) + 1
         
         pad = (n_chunks - 1) * hop_size + chunk_size - n_samples
+        pad_left = min(2 * overlap, n_samples - 1)
+        pad_right = min(2 * overlap + pad, n_samples - 1)
 
+        # FIX PADDING
         # print(audio.shape)
         audio = F.pad(
             audio,
-            pad=(2 * overlap, 2 * overlap + pad),
-            mode="reflect"
-        )
+            pad=(pad_left, pad_right),
+            mode="reflect")
+
+        # audio = F.pad(
+        #     audio,
+        #     pad=(2 * overlap, 2 * overlap + pad),
+        #     # mode="reflect" # ----> fills the padded regions by reflecting the values near the tensor's boundary
+        #     mode = "constant" # ----> fills the padded regions with a single, fixed value, typically zero.
+        # )
         padded_length = audio.shape[-1]
         audio = audio.reshape(c, 1, -1, 1)
         
