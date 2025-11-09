@@ -717,6 +717,12 @@ def inference_byoq(
     mixture, fsm = ta.load(input_path)
     query, fsq = ta.load(query_path)
 
+    #fix songs that only has 1 channel (mono)
+    if config.model.kwargs.in_channel == 2 and mixture.shape[0] != 2:
+        print("Converting mono to stereo by duplicating channel.")
+        #duplicate the channel to be stereo
+        mixture = torch.cat([mixture, mixture], dim=0)
+
     if fsm != model_fs:
         mixture = ta.functional.resample(mixture, orig_freq=fsm, new_freq=model_fs)
         
