@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from typing import List
 import pandas as pd
 
-# os.add_dll_directory("D:/Bandit/experiment/query-bandit/ffmpeg-7.1.1-full_build-shared/bin")
+os.add_dll_directory("D:/Bandit/experiment/query-bandit/ffmpeg-7.1.1-full_build-shared/bin")
 
 import torch
 from tqdm import tqdm
@@ -711,6 +711,12 @@ def inference_byoq(
     mixture, fsm = ta.load(input_path)
     query, fsq = ta.load(query_path)
 
+    #fix songs that only has 1 channel (mono)
+    if config.model.kwargs.in_channel == 2 and mixture.shape[0] != 2:
+        print("Converting mono to stereo by duplicating channel.")
+        #duplicate the channel to be stereo
+        mixture = torch.cat([mixture, mixture], dim=0)
+
     if fsm != model_fs:
         mixture = ta.functional.resample(mixture, orig_freq=fsm, new_freq=model_fs)
         
@@ -752,8 +758,8 @@ def inference_byoq(
 if __name__ == "__main__":
     # import torch
     # print(torch.cuda.is_available())
-    import fire
-    fire.Fire()
-    # os.environ['CONFIG_ROOT'] = "D:/Bandit/experiment/query-bandit/config"
-    # inference_byoq(ckpt_path="vdbgp-pre-aug-bal.ckpt", input_path="001039.mp3", query_path="clean-electric-guitar_116bpm_B_major.wav",
-    #                output_path="separated_instrument/result.wav", config_path="expt/bandit-everything-test.yml", batch_size=8, use_cuda=True)
+    # import fire
+    # fire.Fire()
+    os.environ['CONFIG_ROOT'] = "D:/Bandit/experiment/query-bandit/config"
+    inference_byoq(ckpt_path="vdbgp-pre-aug-bal.ckpt", input_path="153383.mp3", query_path="clean-electric-guitar_116bpm_B_major.wav",
+                   output_path="separated_instrument/result.wav", config_path="expt/bandit-everything-test.yml", batch_size=1, use_cuda=True)
